@@ -1,8 +1,8 @@
 #pragma once
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
-#include "Date.h"
 #include "Accumulator.h"
+#include <vector>
 #include <iomanip>
 #include <cmath>
 
@@ -17,8 +17,11 @@ public:
 	void record(Date date, double total, string desc);
 	void error(string msg)const;
 	string getId()const;
+	virtual void show();
+	virtual void deposit(Date date, double amount, string state) = 0;
+	virtual void withdraw(Date date, double amount, string state) = 0;
+	virtual void settle(Date date) = 0;
 	double getBalance()const;
-	//virtual void show();
 	static double getTotal();
 	~Account();
 protected:
@@ -26,8 +29,6 @@ protected:
 	double balance;
 	static double total;
 };
-
-double Account::total = 0;
 
 //SavingsAccount:
 

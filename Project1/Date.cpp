@@ -2,6 +2,13 @@
 
 using namespace std;
 
+Date::Date()
+{
+	year = 2008;
+	month = 11;
+	day = 1;
+}
+
 Date::Date(int year, int month, int day)
 {
 	this->year = year;
@@ -28,7 +35,46 @@ void Date::setdate(Date date)
 	this->day = date.getday();
 }
 
-int Date::getdate(Date date)
+int Date::getmaxday()
+{
+	int a = this->month, b = this->year;
+	if (a == 1 || a == 3 || a == 5 || a == 7 || a == 8 || a == 10 || a == 12) return 30;
+	else
+	{
+		if (a == 4 || a == 6 || a == 9 || a == 11) return 30;
+		else
+		{
+			if ((b % 4 == 0 && b % 100 != 0) || b % 400 == 0) return 29;
+			else return 28;
+		}
+	}
+}
+
+
+bool Date::isleapyear()
+{
+	int t = this->year;
+	if ((t % 4 == 0 && t % 100 != 0) || t % 400 == 0)
+	{
+		return true;
+	}
+	else return false;
+}
+
+void Date::show()
+{
+	int a = this->year, b = this->month, c = this->day;
+	if (b >= 10)
+	{
+		cout << a << "-" << b << "-" << setw(8) << left << c;
+	}
+	else
+	{
+		cout << a << "-" << b << "-" << setw(9) << left << c;
+	}
+}
+
+int Date::getdate(Date date)//得到这一次日期和上一次日期之间相差的天数 
 {
 	int year1 = this->getyear(), month1 = this->getmonth(), day1 = this->getday()
 		, year2 = date.getyear(), month2 = date.getmonth(), day2 = date.getday();

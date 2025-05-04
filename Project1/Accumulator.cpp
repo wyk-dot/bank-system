@@ -30,3 +30,4 @@ Accumulator::Accumulator(Date date, double value) :LastDate(date)
 Accumulator::~Accumulator()
 {
 }
+
