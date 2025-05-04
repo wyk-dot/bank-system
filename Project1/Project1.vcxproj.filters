@@ -24,12 +24,18 @@
     <ClCompile Include="Date.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Accumulator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Date.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Accumulator.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
