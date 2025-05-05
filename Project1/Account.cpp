@@ -2,10 +2,12 @@
 #include <iomanip>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 //Account:
 
 double Account::total = 0.0;
+multimap<Date, AccountRecord> Account::recordMap;
 
 Account::Account(Date date, string id)
 {
@@ -18,6 +20,9 @@ Account::Account(Date date, string id)
 void Account::record(Date date, double amount,double balance, string desc)
 {
 	AccountRecord a=AccountRecord(date, this, amount, balance, desc);
+	recordMap.insert(make_pair(date, a));
+	date.show();
+	cout << "#" << setw(15) << left << id << setw(8) << amount << setw(8) << balance << desc << endl;
 }
 void Account::error(string msg)const
 {
@@ -39,7 +44,16 @@ double Account::getBalance()const
 
 void Account::query(Date date1, Date date2)
 {
-
+	multimap<Date, AccountRecord>::iterator a = recordMap.lower_bound(date1);
+	multimap<Date, AccountRecord>::iterator b = recordMap.upper_bound(date1);
+	multimap<Date, AccountRecord>::iterator p;
+	/*a->second.show();
+	b--;
+	b->second.show();*/
+	for (p = recordMap.begin();p != recordMap.end();p++)
+	{
+		p->second.show();
+	}
 }
 
 double Account::getTotal()
@@ -69,10 +83,8 @@ void SavingsAccount::deposit(Date date, double amount, string state)
 	balance += amount;
 	acc.change(date, balance);
 	total += amount;
+	record(date, amount, balance, state);
 	acc.LastDate.setdate(date);
-	date.show();
-	Account::show();
-	cout << setw(8) << amount << setw(8) << balance << state << endl;
 }
 void SavingsAccount::withdraw(Date date, double amount, string state)
 {
@@ -86,10 +98,8 @@ void SavingsAccount::withdraw(Date date, double amount, string state)
 	balance += amount;
 	acc.change(date, balance);
 	total += amount;
+	record(date, amount, balance, state);
 	acc.LastDate.setdate(date);
-	date.show();
-	Account::show();
-	cout << setw(8) << amount << setw(8) << balance << state << endl;
 }
 void SavingsAccount::settle(Date date)
 {
@@ -106,16 +116,12 @@ void SavingsAccount::settle(Date date)
 	balance += accumulation;
 	acc.reset(date, balance);
 	total += accumulation;
-	record(date, accumulation, balance, "interest");
-	date.show();
-	Account::show();
-	cout << setw(8) << left << floor(accumulation * 100 + 0.5) / 100 << setw(8) <<
-		left << balance << "interest" << endl;
+	record(date, floor(accumulation * 100 + 0.5) / 100, balance, "interest");
 }
 
 void SavingsAccount::show()
 {
-	cout << id << setw(16) << right << "Balance: " << balance;
+	cout << " " << setw(12) << left << id << "Balance: " << balance;
 }
 
 SavingsAccount::~SavingsAccount()
@@ -161,9 +167,6 @@ void CreditAccount::deposit(Date date, double amount, string desc)
 	total += amount;
 	record(date, amount, balance, desc);
 	acc.LastDate.setdate(date);
-	date.show();
-	Account::show();
-	cout << setw(8) << amount << setw(8) << balance << desc << endl;
 }
 void CreditAccount::withdraw(Date date, double amount, string desc)
 {
@@ -178,9 +181,6 @@ void CreditAccount::withdraw(Date date, double amount, string desc)
 	record(date, amount, balance, desc);
 	total += amount;
 	acc.LastDate.setdate(date);
-	date.show();
-	Account::show();
-	cout << setw(8) << amount << setw(8) << balance << desc << endl;
 }
 void CreditAccount::settle(Date date)
 {
@@ -193,11 +193,7 @@ void CreditAccount::settle(Date date)
 		total += amount;
 		if (balance < 0) acc.reset(date, balance * rate);
 		else acc.reset(date, 0);
-		record(date, amount, balance, "insterest");
-		date.show();
-		Account::show();
-		cout << setw(8) << left << floor(amount * 100 + 0.5) / 100 << setw(8) <<
-			left << balance << "interest" << endl;
+		record(date, floor(amount * 100 + 0.5) / 100, balance, "interest");
 	}
 	if (a != date.getyear())
 	{
@@ -206,18 +202,13 @@ void CreditAccount::settle(Date date)
 		if (balance < 0) acc.reset(date, balance * rate);
 		else acc.reset(date, 0);
 		record(date, (-1)*fee, balance, "annual fee");
-		date.show();
-		Account::show();
-		if (fee != 0) cout << "-";
-		cout << setw(7) << left << fee << setw(8) <<
-			left << balance << "annual fee" << endl;
 		return;
 	}
 }
 
 void CreditAccount::show()
 {
-	cout << id << setw(16) << right << "Balance: " << setw(6) << left << balance << "available credit: " << getAvailableCredit();
+	cout << " " << setw(12) << left << id << "Balance: " << setw(6) << left << balance << "available credit: " << getAvailableCredit();
 }
 
 CreditAccount::~CreditAccount()

@@ -35,20 +35,6 @@ void Date::setdate(Date date)
 	this->day = date.getday();
 }
 
-bool Date::operator<(Date date)
-{
-	if (year < date.getyear()) return true;
-	else
-	{
-		if (month < date.getmonth()) return true;
-		else
-		{
-			if (day < date.getday()) return true;
-			else return false;
-		}
-	}
-}
-
 int Date::getmaxday()
 {
 	int a = this->month, b = this->year;
@@ -64,6 +50,20 @@ int Date::getmaxday()
 	}
 }
 
+bool Date::operator<(const Date& date2) const
+{
+	if (this->year < date2.year) return true;
+	else if (this->year > date2.year) return false;
+	if (this->month < date2.month) return true;
+	else if (this->month > date2.month) return false;
+	return this->day < date2.day;
+}
+
+bool Date::operator==(const Date& date2) const
+{
+	if (this->year == date2.getyear() && this->month == date2.getmonth() && this->day == date2.getday()) return true;
+	else return false;
+}
 
 bool Date::isleapyear()
 {
@@ -75,7 +75,7 @@ bool Date::isleapyear()
 	else return false;
 }
 
-void Date::show()
+void Date::show()const
 {
 	int a = this->year, b = this->month, c = this->day;
 	if (b >= 10)

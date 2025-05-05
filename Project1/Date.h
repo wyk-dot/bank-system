@@ -15,11 +15,12 @@ public:
 	int getday()const;
 	int getmaxday();
 	bool isleapyear();
-	void show();
+	void show()const;
 	int getdate(Date date)const;
 	void setdate(Date date);
 	static Date read();
-	bool operator< (Date date);
+	bool operator<(const Date& date2) const;
+	bool operator==(const Date& date2) const;
 	~Date();
 protected:
 	int year, month, day;

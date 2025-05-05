@@ -1,14 +1,24 @@
-//Step4.cpp
+//step5.cpp
 
 #include "account.h"
 
 #include <iostream>
 
+#include <vector>
+
+#include <algorithm>
+
 #include <string>
 
-#include <cstring>
-
 using namespace std;
+
+
+
+struct deleter {
+
+	template <class T> void operator () (T* p) { delete p; }
+
+};
 
 
 
@@ -16,21 +26,9 @@ int main() {
 
 	Date date(2008, 11, 1);//起始日期
 
-	//建立几个账户
+	vector<Account*> accounts;//创建账户数组，元素个数为0
 
-	SavingsAccount sa1(date, "S3755217", 0.015);
-
-	SavingsAccount sa2(date, "02342342", 0.015);
-
-	CreditAccount ca(date, "C5392394", 10000, 0.0005, 50);
-
-	Account* accounts[] = { &sa1, &sa2, &ca };
-
-	const int n = sizeof(accounts) / sizeof(Account*);//账户总数
-
-
-
-	cout << "(d)deposit (w)withdraw (s)show (c)change day (n)next month (e)exit" << endl;
+	cout << "(a)add account (d)deposit (w)withdraw (s)show (c)change day (n)next month (q)query (e)exit" << endl;
 
 	char cmd;
 
@@ -40,21 +38,51 @@ int main() {
 
 		date.show();
 
-		cout << "\tTotal: " << Account::getTotal() << "\tcommand> ";
+		cout << "Total: " << Account::getTotal() << "\tcommand> ";
 
 
+
+		char type;
 
 		int index, day;
 
-		double amount;
+		double amount, credit, rate, fee;
 
-		string desc;
+		string id, desc;
+
+		Account* account;
+
+		Date date1, date2;
 
 
 
 		cin >> cmd;
 
 		switch (cmd) {
+
+		case 'a'://增加账户
+
+			cin >> type >> id;
+
+			if (type == 's') {
+
+				cin >> rate;
+
+				account = new SavingsAccount(date, id, rate);
+
+			}
+
+			else {
+
+				cin >> credit >> rate >> fee;
+
+				account = new CreditAccount(date, id, credit, rate, fee);
+
+			}
+
+			accounts.push_back(account);
+
+			break;
 
 		case 'd'://存入现金
 
@@ -78,7 +106,7 @@ int main() {
 
 		case 's'://查询各账户信息
 
-			for (int i = 0; i < n; i++) {
+			for (size_t i = 0; i < accounts.size(); i++) {
 
 				cout << "[" << i << "] ";
 
@@ -103,9 +131,7 @@ int main() {
 				cout << "Invalid day";
 
 			else
-
 				date = Date(date.getyear(), date.getmonth(), day);
-
 			break;
 
 		case 'n'://进入下个月
@@ -118,15 +144,31 @@ int main() {
 
 				date = Date(date.getyear(), date.getmonth() + 1, 1);
 
-			for (int i = 0; i < n; i++)
+			for (vector<Account*>::iterator iter = accounts.begin(); iter != accounts.end(); ++iter)
 
-				accounts[i]->settle(date);
+				(*iter)->settle(date);
+
+			break;
+
+		case 'q'://查询一段时间内的账目
+
+			date1 = Date::read();
+
+			date2 = Date::read();
+
+			Account::query(date1, date2);
 
 			break;
 
 		}
 
 	} while (cmd != 'e');
+
+
+
+
+
+	for_each(accounts.begin(), accounts.end(), deleter());
 
 	return 0;
 
