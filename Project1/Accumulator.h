@@ -13,7 +13,6 @@ public:
 	double getSum(Date date)const;
 	void change(Date date, double value);
 	void reset(Date date, double value);
-	int getdate(Date date);
 	~Accumulator();
 	Date LastDate;
 	double value;

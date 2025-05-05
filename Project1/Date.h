@@ -10,14 +10,16 @@ class Date
 public:
 	Date();
 	Date(int year, int month, int day);
-	int getyear();
-	int getmonth();
-	int getday();
+	int getyear()const;
+	int getmonth()const;
+	int getday()const;
 	int getmaxday();
 	bool isleapyear();
 	void show();
-	int getdate(Date date);
+	int getdate(Date date)const;
 	void setdate(Date date);
+	static Date read();
+	bool operator< (Date date);
 	~Date();
 protected:
 	int year, month, day;

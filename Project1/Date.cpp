@@ -16,15 +16,15 @@ Date::Date(int year, int month, int day)
 	this->day = day;
 }
 
-int Date::getyear()
+int Date::getyear()const
 {
 	return year;
 }
-int Date::getmonth()
+int Date::getmonth()const
 {
 	return month;
 }
-int Date::getday()
+int Date::getday()const
 {
 	return day;
 }
@@ -33,6 +33,20 @@ void Date::setdate(Date date)
 	this->year = date.getyear();
 	this->month = date.getmonth();
 	this->day = date.getday();
+}
+
+bool Date::operator<(Date date)
+{
+	if (year < date.getyear()) return true;
+	else
+	{
+		if (month < date.getmonth()) return true;
+		else
+		{
+			if (day < date.getday()) return true;
+			else return false;
+		}
+	}
 }
 
 int Date::getmaxday()
@@ -74,7 +88,7 @@ void Date::show()
 	}
 }
 
-int Date::getdate(Date date)//得到这一次日期和上一次日期之间相差的天数 
+int Date::getdate(Date date)const//得到这一次日期和上一次日期之间相差的天数 
 {
 	int year1 = this->getyear(), month1 = this->getmonth(), day1 = this->getday()
 		, year2 = date.getyear(), month2 = date.getmonth(), day2 = date.getday();
@@ -117,6 +131,14 @@ int Date::getdate(Date date)//得到这一次日期和上一次日期之间相差的天数
 		month1 = 1;
 	}
 	return t;
+}
+
+Date Date::read()
+{
+	int year, month, day;
+	char a, b;
+	cin >> year >> a >> month >> b >> day;
+	return Date(year, month, day);
 }
 
 Date::~Date()
