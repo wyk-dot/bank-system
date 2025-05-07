@@ -11,6 +11,11 @@ Date::Date()
 
 Date::Date(int year, int month, int day)
 {
+	if (isValidDate(year, month, day) == false)
+	{
+		throw runtime_error("Date input error!");
+		return;
+	}
 	this->year = year;
 	this->month = month;
 	this->day = day;
@@ -48,6 +53,17 @@ int Date::getmaxday()
 			else return 28;
 		}
 	}
+}
+
+bool Date::isValidDate(int year, int month, int day) {
+	if (year < 1900 || year > 2099) return false;
+	if (month < 1 || month > 12) return false;
+	int d[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	if (month == 2 && ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))) {
+		d[1] = 29;
+	}
+	if (day < 1 || day > d[month - 1]) return false;
+	return true;
 }
 
 bool Date::operator<(const Date& date2) const

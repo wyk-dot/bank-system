@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <string>
+#include <cstring>
 
 //Account:
 
@@ -42,15 +44,12 @@ double Account::getBalance()const
 	return balance;
 }
 
-void Account::query(Date date1, Date date2)
+void Account::query(Date& date1, Date& date2)
 {
 	multimap<Date, AccountRecord>::iterator a = recordMap.lower_bound(date1);
-	multimap<Date, AccountRecord>::iterator b = recordMap.upper_bound(date1);
+	multimap<Date, AccountRecord>::iterator b = recordMap.lower_bound(date2);
 	multimap<Date, AccountRecord>::iterator p;
-	/*a->second.show();
-	b--;
-	b->second.show();*/
-	for (p = recordMap.begin();p != recordMap.end();p++)
+	for (p = a;p != b;p++)
 	{
 		p->second.show();
 	}
@@ -79,7 +78,6 @@ void SavingsAccount::getRate()
 
 void SavingsAccount::deposit(Date date, double amount, string state)
 {
-	//accumulation += (acc.getdate(date)) * balance;
 	balance += amount;
 	acc.change(date, balance);
 	total += amount;
@@ -88,12 +86,7 @@ void SavingsAccount::deposit(Date date, double amount, string state)
 }
 void SavingsAccount::withdraw(Date date, double amount, string state)
 {
-	if (amount > balance)
-	{
-		error("not enough money");
-		return;
-	}
-	//accumulation += (acc.getdate(date)) * balance;
+	if (amount > balance) throw AccountException("not enough money in SavingsAccount ", this);
 	amount = -amount;
 	balance += amount;
 	acc.change(date, balance);
@@ -106,7 +99,6 @@ void SavingsAccount::settle(Date date)
 	int p = acc.LastDate.getyear();
 	int c = date.getyear(), e = date.getmonth(), f = date.getday();
 	if (p == c || e != 1 || f != 1 || balance==0) return;//balance等于零则退出是因为这时利息为零，没有进行后面步骤的必要。
-	//int h = acc.LastDate.getdate(date);
 	double accumulation=acc.getSum(date);
 	if ((p % 4 == 0 && p % 100 != 0) || p % 400 == 0)
 	{
@@ -170,11 +162,7 @@ void CreditAccount::deposit(Date date, double amount, string desc)
 }
 void CreditAccount::withdraw(Date date, double amount, string desc)
 {
-	if (amount > credit + balance)
-	{
-		error("not enough money");
-		return;
-	}
+	if (amount > credit + balance) throw AccountException("not enough money in CreditAccount ", this);
 	amount = -amount;
 	balance += amount;
 	if (balance < 0) acc.change(date, balance * rate);
@@ -223,5 +211,25 @@ void AccountRecord::show()
 	date.show();
 	cout << "\t#" << account->getId() << "\t" << amount << "\t" << balance << "\t" << desc << endl;
 }
+
+//AccountException
+AccountException::AccountException(string err, Account* account) :runtime_error(err)
+{
+	this->account = account;
+
+}
+const char* AccountException::what()const
+{
+	cout << runtime_error::what() << "#";
+	cout << account->getId() << endl;
+	/*char* str = (char*)malloc(30 * sizeof(char));//在堆上分配数组内存，防止返回数组指针后指针指向不确定区域而引发错误。
+	for (int i = 0; i < id.size();i++)
+	{
+		str[i] = id[i];
+	}*/
+	return "wuyinke";
+}
+AccountException::~AccountException()
+{}
 
 

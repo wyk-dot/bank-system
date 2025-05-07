@@ -16,7 +16,7 @@ Date date(2008, 11, 1);
 char type, cmd;
 int index, day;
 double amount, credit, rate, fee;
-string id, desc;
+string id, desc, ass;//定义一个ass作为辅助
 Account* account;
 Date date1, date2;
 
@@ -37,7 +37,7 @@ int main() {
 	fstream file;
 	if (cmd == 'y')
 	{
-		file.open("./command.txt", ios::in);
+		file.open("./command.txt", ios::in);//
 		if (file.is_open() == false)
 		{
 			cout << "Failure to open the file" << endl;
@@ -57,10 +57,6 @@ int main() {
 		}
 	}
 	else file.open("./command.txt", ios::out);
-
-	//Date date(2008, 11, 1);起始日期
-
-	//vector<Account*> accounts;创建账户数组，元素个数为0
 
 	cout << "(a)add account (d)deposit (w)withdraw (s)show (c)change day (n)next month (q)query (e)exit" << endl;
 
@@ -94,12 +90,21 @@ int main() {
 			accounts[index]->deposit(date, amount, desc);
 			file << "d" << " " << index << " " << amount << " " << desc << "\n";
 			break;
+			
 		case 'w'://取出现金
-			cin >> index >> amount;
-			getline(cin, desc);
-			accounts[index]->withdraw(date, amount, desc);
-			file << "w" << " " << index << " " << amount << " " << desc << "\n";
+			try {
+				cin >> index >> amount;
+				getline(cin, desc);
+				accounts[index]->withdraw(date, amount, desc);
+				file << "w" << " " << index << " " << amount << " " << desc << "\n";
+				break;
+			}
+			catch (AccountException e)
+			{
+				e.what();
+			}
 			break;
+			
 		case 's'://查询各账户信息
 			for (size_t i = 0; i < accounts.size(); i++) {
 				cout << "[" << i << "] ";
@@ -128,10 +133,19 @@ int main() {
 			file << "n" << "\n";
 			break;
 		case 'q'://查询一段时间内的账目
-			date1 = Date::read();
-			date2 = Date::read();
-			Account::query(date1, date2);
-			file << "q" << desc << "\n";
+			try {
+				date1 = Date::read();
+				date2 = Date::read();
+				Account::query(date1, date2);
+				file << "q" << desc << "\n";
+			}
+			catch (const runtime_error& a)
+			{
+				
+				getline(cin, ass);//ass这里将未读入的字符全部读入，防止循环多执行几次
+				cout << a.what() << endl;
+				break;
+			}
 			break;
 		}
 	} while (cmd != 'e');
@@ -143,8 +157,8 @@ int main() {
 
 }
 
-
-void fx(string buffer)
+/*此函数用于将读取到的每一行文本内容buffer分散成单个字符串进行处理，然后重新执行上一次的操作*/
+void fx(string buffer) 
 {
 	istringstream ss(buffer);
 	vector<string> c;
@@ -220,3 +234,19 @@ void fx(string buffer)
 		Account::query(date1, date2);
 	}
 }
+
+/*
+* a s S123456 0.0020
+* a c C654321 20000 0.0007 120
+* d 0 1050
+* w 0 50
+* s
+* c 5
+* w 1 3000
+*  q 2008/10/1 2008/12/1
+* 
+* 
+* 
+* 
+* 
+*/

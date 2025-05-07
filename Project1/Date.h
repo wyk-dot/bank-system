@@ -18,6 +18,7 @@ public:
 	void show()const;
 	int getdate(Date date)const;
 	void setdate(Date date);
+	bool isValidDate(int year, int month, int day);
 	static Date read();
 	bool operator<(const Date& date2) const;
 	bool operator==(const Date& date2) const;

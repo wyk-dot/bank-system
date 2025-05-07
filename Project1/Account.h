@@ -3,6 +3,7 @@
 #define ACCOUNT_H
 #include "Accumulator.h"
 #include <vector>
+#include <stdexcept>
 #include <iomanip>
 #include <cmath>
 #include <map>
@@ -39,7 +40,7 @@ public:
 	virtual void withdraw(Date date, double amount, string state) = 0;
 	virtual void settle(Date date) = 0;
 	double getBalance()const;
-	static void query(Date date1, Date date2);
+	static void query(Date& date1, Date& date2);
 	static double getTotal();
 	~Account();
 protected:
@@ -88,6 +89,17 @@ protected:
 	double credit;
 	double rate;
 	double fee;
+};
+
+class AccountException:public runtime_error
+{
+private:
+	Account* account;
+	char* id;
+public:
+	AccountException(string err, Account* account);
+	const char* what()const;
+	~AccountException();
 };
 
 #endif
