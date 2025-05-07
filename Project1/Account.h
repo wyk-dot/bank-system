@@ -95,7 +95,6 @@ class AccountException:public runtime_error
 {
 private:
 	Account* account;
-	char* id;
 public:
 	AccountException(string err, Account* account);
 	const char* what()const;

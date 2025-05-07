@@ -222,11 +222,6 @@ const char* AccountException::what()const
 {
 	cout << runtime_error::what() << "#";
 	cout << account->getId() << endl;
-	/*char* str = (char*)malloc(30 * sizeof(char));//在堆上分配数组内存，防止返回数组指针后指针指向不确定区域而引发错误。
-	for (int i = 0; i < id.size();i++)
-	{
-		str[i] = id[i];
-	}*/
 	return "wuyinke";
 }
 AccountException::~AccountException()
